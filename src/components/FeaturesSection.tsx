@@ -1,78 +1,57 @@
-
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Check, Camera, ChartBar } from "lucide-react";
+import { Receipt, Zap, Camera, BarChart3, Target, Shield } from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <Plus className="w-8 h-8 text-blue-600" />,
+      icon: Receipt,
       title: "Manual Expense Tracking",
-      description: "Add expenses quickly with all the details you need - name, amount, category, date, and attachments.",
-      details: ["Expense Name & Amount", "Smart Categories", "Date Selection", "Receipt Attachments"],
-      gradient: "from-blue-50 to-indigo-50"
+      description: "Add expenses with all details - name, amount, category, date, and attach receipts or bills for complete record keeping."
     },
     {
-      icon: <Check className="w-8 h-8 text-green-600" />,
+      icon: Zap,
       title: "Smart Auto-Categorization",
-      description: "Let AI automatically categorize your expenses based on history and patterns to save you time.",
-      details: ["AI-Powered Recognition", "Learning Algorithm", "Custom Categories", "Bulk Categorization"],
-      gradient: "from-green-50 to-emerald-50"
+      description: "Automatically categorize your expenses based on history and patterns. Save time and improve accuracy with intelligent suggestions."
     },
     {
-      icon: <Camera className="w-8 h-8 text-purple-600" />,
+      icon: Camera,
       title: "Screenshot-Based Detection",
-      description: "Upload receipt photos and let OCR technology extract all the details automatically.",
-      details: ["OCR Technology", "Auto-Extract Details", "Multiple Formats", "High Accuracy"],
-      gradient: "from-purple-50 to-pink-50"
+      description: "Upload photos of receipts and let AI extract expense details automatically - name, amount, category, and date in seconds."
     },
     {
-      icon: <ChartBar className="w-8 h-8 text-orange-600" />,
+      icon: BarChart3,
       title: "Powerful Analytics",
-      description: "Get detailed insights with comprehensive reports, trends, and spending analysis.",
-      details: ["Weekly & Monthly Reports", "Budget Tracking", "Trend Analysis", "Merchant Insights"],
-      gradient: "from-orange-50 to-red-50"
+      description: "Get detailed insights with weekly/monthly overviews, category breakdowns, spending trends, and budget tracking."
+    },
+    {
+      icon: Target,
+      title: "Budget Management",
+      description: "Set budgets by category and track your progress. Get alerts when you're approaching your limits to stay on track."
+    },
+    {
+      icon: Shield,
+      title: "Secure & Private",
+      description: "Your financial data is encrypted and secure. Export your data anytime and maintain complete control over your information."
     }
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Powerful Features for
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {" "}Smart Tracking
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to take control of your finances, powered by intelligent automation and detailed analytics.
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section id="features-section" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-5xl mx-auto text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
+          Key Features to Supercharge Your Finances
+        </h2>
+        <p className="text-lg text-gray-600 mb-12">
+          Unlock the power of effortless expense tracking and gain complete control over your financial life.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-gray-50">
-              <CardContent className="p-8">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  {feature.icon}
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {feature.description}
-                </p>
-                
-                <ul className="space-y-2">
-                  {feature.details.map((detail, detailIndex) => (
-                    <li key={detailIndex} className="flex items-center text-sm text-gray-500">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
+            <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardContent className="p-6">
+                <feature.icon className="w-8 h-8 text-blue-600 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-700">{feature.description}</p>
               </CardContent>
             </Card>
           ))}

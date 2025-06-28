@@ -4,6 +4,13 @@ import { Card } from "@/components/ui/card";
 import { ArrowDown, Calendar, ChartBar, Camera } from "lucide-react";
 
 const HeroSection = () => {
+  const scrollToFeatures = () => {
+    const featuresSection = document.querySelector('#features-section');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background gradient overlay */}
@@ -35,8 +42,9 @@ const HeroSection = () => {
               size="lg" 
               variant="outline" 
               className="text-lg px-8 py-6 border-2 hover:bg-gray-50 transform hover:scale-105 transition-all duration-200"
+              onClick={scrollToFeatures}
             >
-              View Demo
+              Learn More
             </Button>
           </div>
           
