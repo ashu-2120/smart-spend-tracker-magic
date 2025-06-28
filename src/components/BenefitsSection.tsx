@@ -1,100 +1,110 @@
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PiggyBank, Clock, Lock, TrendingUp } from "lucide-react";
 
 const BenefitsSection = () => {
   const benefits = [
     {
-      title: "Gain Financial Clarity",
-      description: "See exactly where your money goes with detailed breakdowns and visual insights.",
-      stat: "95% of users report better financial awareness"
+      icon: PiggyBank,
+      title: "Maximize Savings",
+      description: "Identify areas where you can cut back and optimize your spending to achieve your financial goals faster."
     },
     {
-      title: "Stay Within Budget",
-      description: "Set budgets and get alerts when you're approaching your limits.",
-      stat: "Average 23% reduction in overspending"
+      icon: Clock,
+      title: "Save Time",
+      description: "Automate expense tracking and eliminate manual data entry, freeing up your time for what matters most."
     },
     {
-      title: "Spot Spending Trends",
-      description: "Identify unusual patterns and optimize your spending habits over time.",
-      stat: "Users save an average of $340/month"
+      icon: Lock,
+      title: "Stay Secure",
+      description: "Protect your financial data with advanced encryption and security measures, ensuring your peace of mind."
     },
     {
-      title: "Save Time with Automation",
-      description: "Let AI handle categorization and data entry so you can focus on what matters.",
-      stat: "Save 4+ hours per month on expense tracking"
-    },
-    {
-      title: "Plan Better with Insights",
-      description: "Make informed financial decisions with comprehensive analytics and forecasting.",
-      stat: "78% improvement in financial planning"
-    },
-    {
-      title: "Secure & Private",
-      description: "Your financial data is encrypted and protected with bank-level security.",
-      stat: "256-bit encryption & SOC 2 compliant"
+      icon: TrendingUp,
+      title: "Track Progress",
+      description: "Monitor your financial performance and see how your spending habits evolve over time with intuitive charts and reports."
     }
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-7xl mx-auto">
+    <section id="benefits-section" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Why Choose Our
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {" "}Expense Tracker?
+            Why Choose
+            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              {" "}Fintrack?
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join thousands of users who have transformed their financial habits with our intelligent tracking system.
+            Transform your financial habits and take control of your money with intelligent insights and effortless tracking.
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((benefit, index) => (
-            <Card key={index} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white/80 backdrop-blur-sm border-0">
-              <CardContent className="p-8 text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Check className="w-6 h-6 text-white" />
+
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Benefits List */}
+          <div className="space-y-8">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex items-start space-x-4 group">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-green-200 group-hover:to-emerald-200 transition-colors duration-200">
+                  <benefit.icon className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{benefit.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Right Column - Stats/Testimonial */}
+          <div className="space-y-8">
+            <Card className="p-8 bg-white/80 backdrop-blur-sm shadow-xl border-green-100">
+              <div className="text-center space-y-6">
+                <div className="space-y-4">
+                  <div className="flex justify-center space-x-8">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600">89%</div>
+                      <div className="text-sm text-gray-600">Save Time</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-emerald-600">$847</div>
+                      <div className="text-sm text-gray-600">Avg. Monthly Savings</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-teal-600">95%</div>
+                      <div className="text-sm text-gray-600">User Satisfaction</div>
+                    </div>
+                  </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {benefit.title}
-                </h3>
-                
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {benefit.description}
-                </p>
-                
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg">
-                  <p className="text-sm font-semibold text-blue-700">
-                    {benefit.stat}
-                  </p>
+                <div className="border-t border-green-100 pt-6">
+                  <blockquote className="text-gray-700 italic text-lg leading-relaxed">
+                    "Fintrack completely changed how I manage my finances. The receipt scanning feature alone saves me hours every week!"
+                  </blockquote>
+                  <div className="mt-4 flex items-center justify-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-200 to-emerald-200 rounded-full flex items-center justify-center">
+                      <span className="text-green-700 font-semibold">SJ</span>
+                    </div>
+                    <div className="text-left">
+                      <div className="font-semibold text-gray-900">Sarah Johnson</div>
+                      <div className="text-sm text-gray-600">Small Business Owner</div>
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
+              </div>
             </Card>
-          ))}
-        </div>
-        
-        {/* Testimonial */}
-        <div className="mt-16 text-center">
-          <Card className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm border-0 shadow-xl">
-            <CardContent className="p-8">
-              <div className="flex justify-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="w-5 h-5 text-yellow-400 fill-current">★</div>
-                ))}
-              </div>
-              <blockquote className="text-xl italic text-gray-700 mb-4">
-                "This expense tracker completely changed how I manage my finances. The AI categorization saves me hours every month, and the insights help me make better spending decisions."
-              </blockquote>
-              <div className="text-gray-600">
-                <p className="font-semibold">Sarah Johnson</p>
-                <p className="text-sm">Marketing Manager, San Francisco</p>
-              </div>
-            </CardContent>
-          </Card>
+            
+            <div className="text-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200"
+              >
+                Start Your Free Trial
+              </Button>
+              <p className="text-sm text-gray-500 mt-2">No credit card required • 14-day free trial</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

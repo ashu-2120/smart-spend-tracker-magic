@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Receipt, Zap, Camera, BarChart3, Target, Shield } from "lucide-react";
 
@@ -15,13 +16,13 @@ const FeaturesSection = () => {
     },
     {
       icon: Camera,
-      title: "Screenshot-Based Detection",
-      description: "Upload photos of receipts and let AI extract expense details automatically - name, amount, category, and date in seconds."
+      title: "Smart Receipt Scanning",
+      description: "Simply snap a photo of your receipt and watch the magic happen. Our AI instantly reads and extracts the merchant name, total amount, date, and suggests the perfect category - all in seconds. No more manual typing!"
     },
     {
       icon: BarChart3,
       title: "Powerful Analytics",
-      description: "Get detailed insights with weekly/monthly overviews, category breakdowns, spending trends, and budget tracking."
+      description: "Get detailed insights with weekly/monthly overviews, category breakdowns, spending trends, and budget tracking with beautiful charts."
     },
     {
       icon: Target,
@@ -47,9 +48,9 @@ const FeaturesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-green-100 hover:border-green-200">
               <CardContent className="p-6">
-                <feature.icon className="w-8 h-8 text-blue-600 mb-4" />
+                <feature.icon className="w-8 h-8 text-green-600 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-gray-700">{feature.description}</p>
               </CardContent>

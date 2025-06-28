@@ -1,4 +1,3 @@
-
 import {
   Accordion,
   AccordionContent,
@@ -43,36 +42,29 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="faq-section" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Frequently Asked
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {" "}Questions
-            </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            Frequently Asked Questions
           </h2>
-          <p className="text-xl text-gray-600">
-            Everything you need to know about our expense tracking platform.
+          <p className="text-lg text-gray-600">
+            Everything you need to know about Fintrack
           </p>
         </div>
         
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="single" collapsible className="w-full space-y-4">
           {faqs.map((faq, index) => (
             <AccordionItem 
               key={index} 
               value={`item-${index}`}
-              className="bg-white rounded-lg shadow-sm border-0 px-6"
+              className="border border-green-100 rounded-lg px-6 data-[state=open]:border-green-200"
             >
-              <AccordionTrigger className="text-left hover:no-underline py-6">
-                <span className="text-lg font-semibold text-gray-900 pr-4">
-                  {faq.question}
-                </span>
+              <AccordionTrigger className="text-left hover:text-green-600 hover:no-underline py-6">
+                <span className="font-semibold">{faq.question}</span>
               </AccordionTrigger>
-              <AccordionContent className="pb-6">
-                <p className="text-gray-600 leading-relaxed">
-                  {faq.answer}
-                </p>
+              <AccordionContent className="text-gray-600 pb-6">
+                {faq.answer}
               </AccordionContent>
             </AccordionItem>
           ))}
@@ -80,15 +72,12 @@ const FAQSection = () => {
         
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">Still have questions?</p>
-          <div className="space-x-4">
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-              Contact Support
-            </a>
-            <span className="text-gray-300">|</span>
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-              View Documentation
-            </a>
-          </div>
+          <Button 
+            variant="outline" 
+            className="border-green-200 text-green-700 hover:bg-green-50"
+          >
+            Contact Support
+          </Button>
         </div>
       </div>
     </section>
