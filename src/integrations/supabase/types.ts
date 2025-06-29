@@ -9,7 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      expenses: {
+        Row: {
+          amount: number
+          attachment: string | null
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          date: string
+          expense_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          attachment?: string | null
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          date: string
+          expense_name: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          attachment?: string | null
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          date?: string
+          expense_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          created_at: string
+          email: string
+          gender: string | null
+          id: string
+          income: number | null
+          name: string | null
+          phone: string | null
+          profile_completed: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          gender?: string | null
+          id: string
+          income?: number | null
+          name?: string | null
+          phone?: string | null
+          profile_completed?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          gender?: string | null
+          id?: string
+          income?: number | null
+          name?: string | null
+          phone?: string | null
+          profile_completed?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +95,22 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      expense_category:
+        | "food"
+        | "travel"
+        | "bills"
+        | "entertainment"
+        | "shopping"
+        | "healthcare"
+        | "education"
+        | "transportation"
+        | "utilities"
+        | "rent"
+        | "groceries"
+        | "clothing"
+        | "fitness"
+        | "subscriptions"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +225,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      expense_category: [
+        "food",
+        "travel",
+        "bills",
+        "entertainment",
+        "shopping",
+        "healthcare",
+        "education",
+        "transportation",
+        "utilities",
+        "rent",
+        "groceries",
+        "clothing",
+        "fitness",
+        "subscriptions",
+        "other",
+      ],
+    },
   },
 } as const
