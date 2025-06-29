@@ -101,10 +101,10 @@ const Navbar = () => {
               ) : (
                 <>
                   <Button asChild variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
-                    <Link to="/auth">Login</Link>
+                    <Link to="/auth?tab=signin">Login</Link>
                   </Button>
                   <Button asChild className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                    <Link to="/auth">Sign Up</Link>
+                    <Link to="/auth?tab=signup">Sign Up</Link>
                   </Button>
                 </>
               )}
@@ -180,10 +180,10 @@ const Navbar = () => {
                 <div className="pt-4 pb-3 border-t border-green-100">
                   <div className="flex flex-col space-y-2">
                     <Button asChild variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
-                      <Link to="/auth">Login</Link>
+                      <Link to="/auth?tab=signin">Login</Link>
                     </Button>
                     <Button asChild className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                      <Link to="/auth">Sign Up</Link>
+                      <Link to="/auth?tab=signup">Sign Up</Link>
                     </Button>
                   </div>
                 </div>
