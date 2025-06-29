@@ -38,10 +38,10 @@ const Auth = () => {
   // Reset Password Form State
   const [resetEmail, setResetEmail] = useState('');
 
-  // Redirect authenticated users
+  // Redirect authenticated users to dashboard
   useEffect(() => {
     if (user && !loading) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, loading, navigate]);
 
@@ -52,7 +52,7 @@ const Auth = () => {
     const { error } = await signIn(signInData.email, signInData.password);
     
     if (!error) {
-      // Navigation handled in AuthContext
+      navigate('/dashboard');
     }
     
     setIsLoading(false);
