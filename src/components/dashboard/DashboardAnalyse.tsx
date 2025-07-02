@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -95,7 +94,7 @@ const DashboardAnalyse = () => {
       let total = 0;
 
       expenses?.forEach(expense => {
-        const amount = parseFloat(expense.amount);
+        const amount = parseFloat(expense.amount.toString());
         total += amount;
         
         if (!categoryMap[expense.category]) {
@@ -118,11 +117,12 @@ const DashboardAnalyse = () => {
       // Process monthly trend data
       const monthlyMap: Record<string, number> = {};
       expenses?.forEach(expense => {
-        const month = new Date(expense.date).toLocaleDateString('en-US', { 
+        const expenseDate = new Date(expense.date);
+        const month = expenseDate.toLocaleDateString('en-US', { 
           year: 'numeric', 
           month: 'short' 
         });
-        monthlyMap[month] = (monthlyMap[month] || 0) + parseFloat(expense.amount);
+        monthlyMap[month] = (monthlyMap[month] || 0) + parseFloat(expense.amount.toString());
       });
 
       const monthlyTrend = Object.entries(monthlyMap).map(([month, amount]) => ({

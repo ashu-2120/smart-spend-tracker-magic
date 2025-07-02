@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,12 +52,13 @@ const DashboardHome = () => {
       }
 
       // Calculate summary
-      const totalAmount = expenses?.reduce((sum, expense) => sum + parseFloat(expense.amount), 0) || 0;
+      const totalAmount = expenses?.reduce((sum, expense) => sum + parseFloat(expense.amount.toString()), 0) || 0;
       
       // Category breakdown
       const categoryBreakdown: Record<string, number> = {};
       expenses?.forEach(expense => {
-        categoryBreakdown[expense.category] = (categoryBreakdown[expense.category] || 0) + parseFloat(expense.amount);
+        const amount = parseFloat(expense.amount.toString());
+        categoryBreakdown[expense.category] = (categoryBreakdown[expense.category] || 0) + amount;
       });
 
       // Top category
@@ -179,7 +179,7 @@ const DashboardHome = () => {
                     <p className="text-sm text-gray-600 capitalize">{expense.category}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">${parseFloat(expense.amount).toFixed(2)}</p>
+                    <p className="font-semibold">${parseFloat(expense.amount.toString()).toFixed(2)}</p>
                     <p className="text-sm text-gray-600">{new Date(expense.date).toLocaleDateString()}</p>
                   </div>
                 </div>
