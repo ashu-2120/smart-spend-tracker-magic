@@ -39,10 +39,10 @@ const Auth = () => {
   // Reset Password Form State
   const [resetEmail, setResetEmail] = useState('');
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users to home page
   useEffect(() => {
     if (user && !loading) {
-      navigate('/dashboard');
+      navigate('/');
     }
   }, [user, loading, navigate]);
 
@@ -64,7 +64,7 @@ const Auth = () => {
     const { error } = await signIn(signInData.email, signInData.password);
     
     if (!error) {
-      navigate('/dashboard');
+      navigate('/');
     }
     
     setIsLoading(false);
@@ -169,7 +169,7 @@ const Auth = () => {
           </Link>
           <CardTitle className="text-2xl font-bold text-gray-900">Welcome to Fintrack</CardTitle>
           <CardDescription>
-            Sign in to your account or create a new one to start tracking your expenses.
+            Sign in to your account or create a new one.
           </CardDescription>
         </CardHeader>
         <CardContent>

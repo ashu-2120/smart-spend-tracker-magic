@@ -50,14 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-          // Defer profile check to avoid deadlocks
-          setTimeout(() => {
-            checkAndCreateProfile(session.user);
-          }, 0);
-        }
-        
         setLoading(false);
       }
     );
@@ -72,38 +64,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const checkAndCreateProfile = async (user: User) => {
-    try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create it
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            id: user.id,
-            email: user.email || '',
-            name: user.user_metadata?.name || user.user_metadata?.full_name || null,
-          });
-
-        if (insertError) {
-          console.error('Error creating profile:', insertError);
-        }
-      }
-    } catch (error) {
-      console.error('Error checking profile:', error);
-    }
-  };
-
   const signUp = async (email: string, password: string, name?: string) => {
     try {
       cleanupAuthState();
       
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      const redirectUrl = `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -131,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (data.user && data.session) {
         toast({
           title: "Signup successful!",
-          description: "Welcome to Fintrack! You can now log in.",
+          description: "Welcome! You can now use the application.",
         });
       }
 
@@ -175,7 +140,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
-        window.location.href = '/dashboard';
       }
 
       return { error: null };
@@ -203,8 +167,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
-      
-      window.location.href = '/auth';
     } catch (error: any) {
       toast({
         title: "Sign Out Error",
