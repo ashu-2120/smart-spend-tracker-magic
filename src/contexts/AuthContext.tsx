@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -125,8 +124,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user && !data.session) {
         toast({
-          title: "Check your email",
-          description: "Please check your email for a confirmation link to complete your signup.",
+          title: "Signup successful!",
+          description: "Please check your email for a confirmation link, then log in.",
+        });
+      } else if (data.user && data.session) {
+        toast({
+          title: "Signup successful!",
+          description: "Welcome to Fintrack! You can now log in.",
         });
       }
 

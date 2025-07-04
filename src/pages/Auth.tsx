@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -15,8 +14,10 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
-  const tab = searchParams.get('tab') || 'signin';
 
+  // Visibility states for form switching
+  const [showLoginForm, setShowLoginForm] = useState(true);
+  const [showSignupForm, setShowSignupForm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,6 +45,17 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [user, loading, navigate]);
+
+  // Handle form switching
+  const switchToLogin = () => {
+    setShowLoginForm(true);
+    setShowSignupForm(false);
+  };
+
+  const switchToSignup = () => {
+    setShowLoginForm(false);
+    setShowSignupForm(true);
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +90,8 @@ const Auth = () => {
         password: '',
         confirmPassword: '',
       });
+      // Switch to login form
+      switchToLogin();
     }
     
     setIsLoading(false);
@@ -159,149 +173,170 @@ const Auth = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={tab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+          {/* Clickable Form Headers */}
+          <div className="flex mb-6 border-b border-gray-200">
+            <button
+              type="button"
+              onClick={switchToLogin}
+              className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
+                showLoginForm
+                  ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={switchToSignup}
+              className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
+                showSignupForm
+                  ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          {/* Login Form */}
+          {showLoginForm && (
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signin-email">Email</Label>
+                <Input
+                  id="signin-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={signInData.email}
+                  onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signin-password">Password</Label>
+                <div className="relative">
                   <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={signInData.email}
-                    onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signin-password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={signInData.password}
-                      onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
-                      required
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <Link 
-                    to="/auth?mode=reset" 
-                    className="text-sm text-green-600 hover:text-green-700"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Signing In...' : 'Sign In'}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={signUpData.name}
-                    onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-gender">Gender</Label>
-                  <Select value={signUpData.gender} onValueChange={(value) => setSignUpData({ ...signUpData, gender: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                      <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={signUpData.email}
-                    onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signup-password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Create a password"
-                      value={signUpData.password}
-                      onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
-                      required
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-confirm-password">Confirm Password</Label>
-                  <Input
-                    id="signup-confirm-password"
+                    id="signin-password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Confirm your password"
-                    value={signUpData.confirmPassword}
-                    onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                    placeholder="Enter your password"
+                    value={signInData.password}
+                    onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                     required
                   />
-                  {signUpData.password !== signUpData.confirmPassword && signUpData.confirmPassword && (
-                    <p className="text-sm text-red-600">Passwords do not match</p>
-                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                  disabled={isLoading || signUpData.password !== signUpData.confirmPassword}
+              </div>
+              <div className="text-right">
+                <Link 
+                  to="/auth?mode=reset" 
+                  className="text-sm text-green-600 hover:text-green-700"
                 >
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+                  Forgot your password?
+                </Link>
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing In...' : 'Sign In'}
+              </Button>
+            </form>
+          )}
+
+          {/* Sign Up Form */}
+          {showSignupForm && (
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signup-name">Full Name</Label>
+                <Input
+                  id="signup-name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={signUpData.name}
+                  onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-gender">Gender</Label>
+                <Select value={signUpData.gender} onValueChange={(value) => setSignUpData({ ...signUpData, gender: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-email">Email</Label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={signUpData.email}
+                  onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="signup-password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Create a password"
+                    value={signUpData.password}
+                    onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-confirm-password">Confirm Password</Label>
+                <Input
+                  id="signup-confirm-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Confirm your password"
+                  value={signUpData.confirmPassword}
+                  onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                  required
+                />
+                {signUpData.password !== signUpData.confirmPassword && signUpData.confirmPassword && (
+                  <p className="text-sm text-red-600">Passwords do not match</p>
+                )}
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                disabled={isLoading || signUpData.password !== signUpData.confirmPassword}
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </Button>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
