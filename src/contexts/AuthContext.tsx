@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,13 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-
-        // Redirect to dashboard after successful sign in
-        if (event === 'SIGNED_IN' && session?.user) {
-          setTimeout(() => {
-            window.location.href = '/dashboard';
-          }, 100);
-        }
       }
     );
 
@@ -179,9 +171,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
-
-      // Redirect to auth page after sign out
-      window.location.href = '/auth';
     } catch (error: any) {
       toast({
         title: "Sign Out Error",
