@@ -1,9 +1,11 @@
 
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import FeaturesSection from "@/components/FeaturesSection";
+import AdvancedFeaturesSection from "@/components/AdvancedFeaturesSection";
 import BenefitsSection from "@/components/BenefitsSection";
+import AnalyticsSection from "@/components/AnalyticsSection";
 import DemoSection from "@/components/DemoSection";
+import ValuePropositionSection from "@/components/ValuePropositionSection";
 import FAQSection from "@/components/FAQSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -13,8 +15,10 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-100">
       <Navbar />
       <HeroSection />
-      <FeaturesSection />
+      <AdvancedFeaturesSection />
+      <AnalyticsSection />
       <BenefitsSection />
+      <ValuePropositionSection />
       <DemoSection />
       <CTASection />
       <FAQSection />
