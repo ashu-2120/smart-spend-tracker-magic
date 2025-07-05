@@ -1,137 +1,125 @@
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ArrowDown, TrendingUp, Camera, BarChart3 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, Zap, Shield, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
-  const scrollToFeatures = () => {
-    const featuresSection = document.querySelector('#features-section');
-    if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: 'smooth' });
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleGetStarted = () => {
+    if (user) {
+      // User is already logged in, could navigate to dashboard if it exists
+      return;
+    } else {
+      navigate('/auth');
     }
   };
 
-  const scrollToDemo = () => {
-    const demoSection = document.querySelector('#demo-section');
-    if (demoSection) {
-      demoSection.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleTryDemo = () => {
+    navigate('/demo'); // This could be implemented later
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden pt-16">
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 via-emerald-600/5 to-teal-600/10"></div>
-      
-      <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-        {/* Left Column - Content */}
-        <div className="text-center lg:text-left space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+    <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-emerald-400/20 to-teal-400/20 backdrop-blur-3xl"></div>
+      <div className="absolute top-20 left-10 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+      <div className="absolute top-40 right-10 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+
+      <div className="relative max-w-7xl mx-auto">
+        <div className="text-center">
+          {/* Badge */}
+          <Badge className="inline-flex items-center space-x-2 bg-green-100 text-green-800 mb-8 px-6 py-2">
+            <Zap className="w-4 h-4" />
+            <span>AI-Powered Expense Tracking</span>
+          </Badge>
+
+          {/* Main Headlines */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               Smarter Spending
-              <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                {" "}Starts Here
-              </span>
-            </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl">
-              Automatically track, categorize, and analyze your expenses — all in one place. Take control of your finances with intelligent insights.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            </span>
+            <br />
+            Starts Here
+          </h1>
+
+          {/* Supporting tagline */}
+          <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Automatically track, categorize, and analyze your expenses — all in one place.
+            Take control of your finances with intelligent insights.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
               size="lg" 
-              className="text-lg px-8 py-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={handleGetStarted}
             >
-              Get Started
+              {user ? "Go to Dashboard" : "Get Started"}
+              <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
+            
             <Button 
               size="lg" 
               variant="outline" 
-              className="text-lg px-8 py-6 border-2 border-green-200 text-green-700 hover:bg-green-50 transform hover:scale-105 transition-all duration-200"
-              onClick={scrollToDemo}
+              className="border-2 border-green-600 text-green-600 hover:bg-green-50 px-8 py-3 text-lg font-semibold transition-all duration-300"
+              onClick={handleTryDemo}
             >
               Try the Demo
             </Button>
           </div>
-          
-          <div className="flex items-center justify-center lg:justify-start space-x-8 text-sm text-gray-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-              <span>Free forever plan</span>
-            </div>
-          </div>
-        </div>
-        
-        {/* Right Column - Enhanced Visual */}
-        <div className="relative lg:block">
-          <div className="relative">
-            <img 
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" 
-              alt="Advanced expense tracking dashboard"
-              className="w-full h-auto rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300"
-            />
-            
-            {/* Enhanced floating dashboard preview */}
-            <Card className="absolute -bottom-6 -left-6 p-4 bg-white/95 backdrop-blur-sm shadow-xl border-0 max-w-xs">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">Smart Insights</h3>
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                </div>
-                
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <BarChart3 className="w-4 h-4 text-green-600" />
-                    <span className="text-xs text-gray-600">This Month</span>
-                  </div>
-                  <p className="text-lg font-bold text-gray-900 mt-1">$2,847.50</p>
-                  <p className="text-xs text-green-600">↓ 12% vs last month</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">🍔 Food & Dining</span>
-                    <span className="font-semibold text-gray-900">$487.30</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">🚗 Transportation</span>
-                    <span className="font-semibold text-gray-900">$215.80</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">🛒 Shopping</span>
-                    <span className="font-semibold text-gray-900">$324.15</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
 
-            {/* Screenshot feature highlight */}
-            <Card className="absolute -top-4 -right-4 p-3 bg-white/95 backdrop-blur-sm shadow-lg border-0 max-w-40">
-              <div className="flex items-center space-x-2">
-                <Camera className="w-4 h-4 text-blue-600" />
-                <div>
-                  <p className="text-xs font-semibold text-gray-900">Screenshot to Track</p>
-                  <p className="text-xs text-gray-600">AI-powered OCR</p>
-                </div>
+          {/* Key benefits */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="flex flex-col items-center space-y-3">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <Shield className="w-6 h-6 text-green-600" />
               </div>
-            </Card>
+              <h3 className="font-semibold text-gray-900">Bank-Level Security</h3>
+              <p className="text-gray-600 text-center">Your financial data is protected with enterprise-grade encryption</p>
+            </div>
+
+            <div className="flex flex-col items-center space-y-3">
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <Zap className="w-6 h-6 text-emerald-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900">AI-Powered Automation</h3>
+              <p className="text-gray-600 text-center">Smart categorization and OCR technology for effortless tracking</p>
+            </div>
+
+            <div className="flex flex-col items-center space-y-3">
+              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-teal-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900">Actionable Insights</h3>
+              <p className="text-gray-600 text-center">Get personalized recommendations to optimize your spending</p>
+            </div>
           </div>
-          
-          {/* Floating elements */}
-          <div className="absolute -top-4 left-4 w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-20 animate-pulse"></div>
         </div>
       </div>
-      
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ArrowDown className="w-6 h-6 text-gray-400" />
-      </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </section>
   );
 };
