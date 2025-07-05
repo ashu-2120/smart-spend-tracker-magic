@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Menu, X, User, Settings, LogOut, Plus, Upload } from "lucide-react";
+import { Menu, X, User, Settings, LogOut, Plus, Upload, MapPin } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation as useLocationContext } from "@/contexts/LocationContext";
 import { Link, useLocation } from "react-router-dom";
 import AddExpenseModal from "./AddExpenseModal";
 
@@ -13,6 +13,7 @@ const DashboardNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { selectedCountry, countries, setSelectedCountry } = useLocationContext();
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -71,6 +72,32 @@ const DashboardNavbar = () => {
           {/* Desktop Action Buttons */}
           <div className="hidden md:block">
             <div className="ml-4 flex items-center space-x-4">
+              {/* Location Selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-green-200 text-green-700 hover:bg-green-50">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {selectedCountry.code} ({selectedCountry.symbol})
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 max-h-64 overflow-y-auto">
+                  {countries.map((country) => (
+                    <DropdownMenuItem
+                      key={country.code}
+                      onClick={() => setSelectedCountry(country)}
+                      className={`cursor-pointer ${
+                        selectedCountry.code === country.code ? 'bg-green-50 text-green-700' : ''
+                      }`}
+                    >
+                      <div className="flex justify-between w-full">
+                        <span>{country.name}</span>
+                        <span className="text-sm text-gray-500">{country.symbol}</span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <Button
                 onClick={() => setIsAddExpenseOpen(true)}
                 className="bg-green-600 hover:bg-green-700"
@@ -172,6 +199,34 @@ const DashboardNavbar = () => {
               </Link>
               
               <div className="pt-4 pb-3 border-t border-green-100">
+                {/* Mobile Location Selector */}
+                <div className="px-3 mb-3">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start border-green-200 text-green-700 hover:bg-green-50">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        {selectedCountry.name} ({selectedCountry.symbol})
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 max-h-64 overflow-y-auto">
+                      {countries.map((country) => (
+                        <DropdownMenuItem
+                          key={country.code}
+                          onClick={() => setSelectedCountry(country)}
+                          className={`cursor-pointer ${
+                            selectedCountry.code === country.code ? 'bg-green-50 text-green-700' : ''
+                          }`}
+                        >
+                          <div className="flex justify-between w-full">
+                            <span>{country.name}</span>
+                            <span className="text-sm text-gray-500">{country.symbol}</span>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
                 <div className="flex items-center px-3 mb-3">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-green-100 text-green-700 text-sm">
