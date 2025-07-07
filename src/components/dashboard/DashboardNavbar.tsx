@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Plus, Home, DollarSign, BarChart3, LogOut, Menu, X, History } from 'lucide-react';
+import { Plus, Home, DollarSign, BarChart3, Menu, X, History } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import AddExpenseModal from './AddExpenseModal';
+import ProfileAvatar from './ProfileAvatar';
 
 const DashboardNavbar = () => {
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -66,19 +67,7 @@ const DashboardNavbar = () => {
                 Add Expense
               </Button>
               
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-700">
-                  {user?.email}
-                </span>
-                <Button
-                  variant="outline"
-                  onClick={signOut}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </div>
+              <ProfileAvatar />
             </div>
 
             {/* Mobile menu button */}
@@ -122,24 +111,17 @@ const DashboardNavbar = () => {
                       setShowAddExpenseModal(true);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white mb-2"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white mb-4"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Expense
                   </Button>
                   
-                  <div className="flex flex-col space-y-2">
-                    <span className="text-sm text-gray-700 px-3">
+                  <div className="flex items-center justify-between px-3">
+                    <span className="text-sm text-gray-700">
                       {user?.email}
                     </span>
-                    <Button
-                      variant="outline"
-                      onClick={signOut}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
+                    <ProfileAvatar />
                   </div>
                 </div>
               </div>

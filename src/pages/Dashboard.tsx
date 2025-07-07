@@ -7,6 +7,8 @@ import DashboardHome from '@/components/dashboard/DashboardHome';
 import DashboardExpenseSummary from '@/components/dashboard/DashboardExpenseSummary';
 import DashboardExpenseHistory from '@/components/dashboard/DashboardExpenseHistory';
 import DashboardExpenseAnalyser from '@/components/dashboard/DashboardExpenseAnalyser';
+import DashboardProfile from '@/components/dashboard/DashboardProfile';
+import DashboardSettings from '@/components/dashboard/DashboardSettings';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -37,6 +39,8 @@ const Dashboard = () => {
           <Route path="/expense-summary" element={<DashboardExpenseSummary />} />
           <Route path="/expense-history" element={<DashboardExpenseHistory />} />
           <Route path="/expense-analyser" element={<DashboardExpenseAnalyser />} />
+          <Route path="/profile" element={<DashboardProfile />} />
+          <Route path="/settings" element={<DashboardSettings />} />
           {/* Legacy redirects for old paths */}
           <Route path="/spends" element={<Navigate to="/dashboard/expense-summary" replace />} />
           <Route path="/analyse" element={<Navigate to="/dashboard/expense-analyser" replace />} />
