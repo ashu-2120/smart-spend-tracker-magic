@@ -18,6 +18,8 @@ export type Database = {
           date: string
           expense_name: string
           id: string
+          notes: string | null
+          sub_category: string | null
           updated_at: string
           user_id: string
         }
@@ -29,6 +31,8 @@ export type Database = {
           date: string
           expense_name: string
           id?: string
+          notes?: string | null
+          sub_category?: string | null
           updated_at?: string
           user_id: string
         }
@@ -40,6 +44,8 @@ export type Database = {
           date?: string
           expense_name?: string
           id?: string
+          notes?: string | null
+          sub_category?: string | null
           updated_at?: string
           user_id?: string
         }

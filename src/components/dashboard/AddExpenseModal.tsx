@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Upload } from "lucide-react";
@@ -24,7 +25,9 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
   const [expenseName, setExpenseName] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<string>('');
+  const [subCategory, setSubCategory] = useState<string>('');
   const [date, setDate] = useState<Date>();
+  const [notes, setNotes] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -36,6 +39,17 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
     'food', 'travel', 'bills', 'entertainment', 'shopping', 
     'healthcare', 'education', 'transportation', 'utilities', 
     'rent', 'groceries', 'clothing', 'fitness', 'subscriptions', 'other'
+  ];
+
+  const subCategories = [
+    'dining out', 'groceries', 'fast food', 'coffee', 'snacks',
+    'flights', 'hotels', 'fuel', 'public transport', 'taxi',
+    'electricity', 'water', 'internet', 'phone', 'gas',
+    'movies', 'games', 'books', 'music', 'sports',
+    'clothes', 'shoes', 'accessories', 'electronics', 'furniture',
+    'doctor', 'medicine', 'dental', 'insurance', 'gym',
+    'courses', 'books', 'supplies', 'tuition', 'training',
+    'maintenance', 'repairs', 'cleaning', 'miscellaneous'
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +101,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
         attachmentUrl = fileName;
       }
 
-      // Insert expense with currency information
+      // Insert expense with all fields including subcategory and notes
       const { error } = await supabase
         .from('expenses')
         .insert({
@@ -95,9 +109,10 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
           expense_name: expenseName,
           amount: parseFloat(amount),
           category: category as any,
+          sub_category: subCategory || null,
           date: format(date, 'yyyy-MM-dd'),
+          notes: notes || null,
           attachment: attachmentUrl,
-          // Store currency information in metadata (if you want to extend the schema later)
         });
 
       if (error) {
@@ -113,7 +128,9 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
       setExpenseName('');
       setAmount('');
       setCategory('');
+      setSubCategory('');
       setDate(undefined);
+      setNotes('');
       setAttachment(null);
       onOpenChange(false);
 
@@ -130,7 +147,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Expense</DialogTitle>
         </DialogHeader>
@@ -187,6 +204,22 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="sub-category">Subcategory</Label>
+            <Select value={subCategory} onValueChange={setSubCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a subcategory (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {subCategories.map((subCat) => (
+                  <SelectItem key={subCat} value={subCat}>
+                    {subCat.charAt(0).toUpperCase() + subCat.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label>Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -210,6 +243,17 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
                 />
               </PopoverContent>
             </Popover>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              placeholder="Add any additional notes about this expense..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+            />
           </div>
 
           <div className="space-y-2">

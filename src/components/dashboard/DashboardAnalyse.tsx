@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from "@/hooks/use-toast";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from 'recharts';
 import { TrendingUp, TrendingDown, Calendar, DollarSign } from 'lucide-react';
 
@@ -18,7 +21,9 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 const DashboardAnalyse = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState('current-month');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -70,8 +75,15 @@ const DashboardAnalyse = () => {
   };
 
   const loadAnalysisData = async () => {
+    if (!user) {
+      setError('User not authenticated');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(null);
       const dateFilter = getDateRangeFilter();
       
       if (!dateFilter) return;
@@ -80,7 +92,7 @@ const DashboardAnalyse = () => {
       const { data: expenses, error } = await supabase
         .from('expenses')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .gte('date', dateFilter.start)
         .lte('date', dateFilter.end)
         .order('date', { ascending: true });
@@ -133,6 +145,12 @@ const DashboardAnalyse = () => {
       setMonthlyTrend(monthlyTrend);
     } catch (error: any) {
       console.error('Error loading analysis data:', error);
+      setError('Failed to load analysis data');
+      toast({
+        title: "Error loading analysis data",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -142,6 +160,21 @@ const DashboardAnalyse = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card>
+          <CardContent className="text-center py-8">
+            <p className="text-red-600 mb-4">Error: {error}</p>
+            <Button onClick={loadAnalysisData} variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -231,129 +264,104 @@ const DashboardAnalyse = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Category Breakdown Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Spending by Category</CardTitle>
-            <CardDescription>Distribution of expenses across categories</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ category, percentage }) => `${category} (${(percentage || 0).toFixed(1)}%)`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="amount"
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value: any) => [`$${value.toFixed(2)}`, 'Amount']} />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                No data available for the selected period
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {categoryData.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Category Breakdown Pie Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Spending by Category</CardTitle>
+                <CardDescription>Distribution of expenses across categories</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ category, percentage }) => `${category} (${(percentage || 0).toFixed(1)}%)`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="amount"
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: any) => [`$${value.toFixed(2)}`, 'Amount']} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        {/* Category Bar Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Categories</CardTitle>
-            <CardDescription>Highest spending categories</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={categoryData.slice(0, 6)}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="category" />
-                  <YAxis />
-                  <Tooltip formatter={(value: any) => [`$${value.toFixed(2)}`, 'Amount']} />
-                  <Bar dataKey="amount" fill="#22c55e" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                No data available for the selected period
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            {/* Category Bar Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Categories</CardTitle>
+                <CardDescription>Highest spending categories</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={categoryData.slice(0, 6)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="category" />
+                    <YAxis />
+                    <Tooltip formatter={(value: any) => [`$${value.toFixed(2)}`, 'Amount']} />
+                    <Bar dataKey="amount" fill="#22c55e" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
 
-      {/* Monthly Trend */}
-      {monthlyTrend.length > 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Spending Trend</CardTitle>
-            <CardDescription>Monthly spending pattern</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={monthlyTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value: any) => [`$${value.toFixed(2)}`, 'Amount']} />
-                <Line type="monotone" dataKey="amount" stroke="#22c55e" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Category Details Table */}
-      {categoryData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Category Details</CardTitle>
-            <CardDescription>Detailed breakdown by category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2">Category</th>
-                    <th className="text-right py-2">Amount</th>
-                    <th className="text-right py-2">Transactions</th>
-                    <th className="text-right py-2">Avg per Transaction</th>
-                    <th className="text-right py-2">% of Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categoryData.map((category, index) => (
-                    <tr key={category.category} className="border-b">
-                      <td className="py-2">
-                        <div className="flex items-center">
-                          <div 
-                            className="w-3 h-3 rounded-full mr-2"
-                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                          ></div>
-                          {category.category}
-                        </div>
-                      </td>
-                      <td className="text-right py-2 font-semibold">${category.amount.toFixed(2)}</td>
-                      <td className="text-right py-2">{category.count}</td>
-                      <td className="text-right py-2">${(category.amount / category.count).toFixed(2)}</td>
-                      <td className="text-right py-2">{((category.amount / totalAmount) * 100).toFixed(1)}%</td>
+          {/* Category Details Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Category Details</CardTitle>
+              <CardDescription>Detailed breakdown by category</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">Category</th>
+                      <th className="text-right py-2">Amount</th>
+                      <th className="text-right py-2">Transactions</th>
+                      <th className="text-right py-2">Avg per Transaction</th>
+                      <th className="text-right py-2">% of Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {categoryData.map((category, index) => (
+                      <tr key={category.category} className="border-b">
+                        <td className="py-2">
+                          <div className="flex items-center">
+                            <div 
+                              className="w-3 h-3 rounded-full mr-2"
+                              style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                            ></div>
+                            {category.category}
+                          </div>
+                        </td>
+                        <td className="text-right py-2 font-semibold">${category.amount.toFixed(2)}</td>
+                        <td className="text-right py-2">{category.count}</td>
+                        <td className="text-right py-2">${(category.amount / category.count).toFixed(2)}</td>
+                        <td className="text-right py-2">{((category.amount / totalAmount) * 100).toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      ) : (
+        <Card>
+          <CardContent className="text-center py-8">
+            <p className="text-gray-600">No expense data available for the selected period.</p>
           </CardContent>
         </Card>
       )}

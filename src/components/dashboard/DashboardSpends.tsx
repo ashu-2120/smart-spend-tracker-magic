@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Search, Filter, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Expense {
@@ -16,7 +15,9 @@ interface Expense {
   expense_name: string;
   amount: number;
   category: string;
+  sub_category: string | null;
   date: string;
+  notes: string | null;
   attachment: string | null;
 }
 
@@ -35,7 +36,7 @@ const DashboardSpends = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const expensesPerPage = 10;
 
@@ -50,11 +51,18 @@ const DashboardSpends = () => {
   }, [expenses, searchTerm, categoryFilter]);
 
   const loadExpenses = async () => {
+    if (!user) {
+      setError('User not authenticated');
+      setLoading(false);
+      return;
+    }
+
     try {
+      setError(null);
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('date', { ascending: false });
 
       if (error) {
@@ -64,9 +72,10 @@ const DashboardSpends = () => {
       setExpenses(data || []);
     } catch (error: any) {
       console.error('Error loading expenses:', error);
+      setError('Failed to load expenses');
       toast({
         title: "Error loading expenses",
-        description: error.message,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -79,7 +88,8 @@ const DashboardSpends = () => {
 
     if (searchTerm) {
       filtered = filtered.filter(expense =>
-        expense.expense_name.toLowerCase().includes(searchTerm.toLowerCase())
+        expense.expense_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (expense.notes && expense.notes.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -92,6 +102,15 @@ const DashboardSpends = () => {
   };
 
   const deleteExpense = async (id: string) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "User not authenticated",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('expenses')
@@ -112,7 +131,7 @@ const DashboardSpends = () => {
       console.error('Error deleting expense:', error);
       toast({
         title: "Error deleting expense",
-        description: error.message,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     }
@@ -128,6 +147,21 @@ const DashboardSpends = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card>
+          <CardContent className="text-center py-8">
+            <p className="text-red-600 mb-4">Error: {error}</p>
+            <Button onClick={loadExpenses} variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -194,8 +228,10 @@ const DashboardSpends = () => {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Category</TableHead>
+                      <TableHead>Subcategory</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Date</TableHead>
+                      <TableHead>Notes</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -208,17 +244,28 @@ const DashboardSpends = () => {
                             {expense.category}
                           </span>
                         </TableCell>
+                        <TableCell>
+                          {expense.sub_category ? (
+                            <span className="capitalize bg-blue-100 px-2 py-1 rounded-full text-sm">
+                              {expense.sub_category}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </TableCell>
                         <TableCell className="font-semibold">${parseFloat(expense.amount.toString()).toFixed(2)}</TableCell>
                         <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
                         <TableCell>
+                          {expense.notes ? (
+                            <span className="text-sm text-gray-600 truncate max-w-32 block">
+                              {expense.notes}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingExpense(expense)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
