@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Plus, Home, DollarSign, BarChart3, LogOut, Menu, X } from 'lucide-react';
+import { Plus, Home, DollarSign, BarChart3, LogOut, Menu, X, History } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import AddExpenseModal from './AddExpenseModal';
 
@@ -21,8 +21,9 @@ const DashboardNavbar = () => {
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Home' },
-    { path: '/dashboard/spends', icon: DollarSign, label: 'Spends' },
-    { path: '/dashboard/analyse', icon: BarChart3, label: 'Analyse' },
+    { path: '/dashboard/expense-summary', icon: DollarSign, label: 'Expense Summary' },
+    { path: '/dashboard/expense-history', icon: History, label: 'Expense History' },
+    { path: '/dashboard/expense-analyser', icon: BarChart3, label: 'Expense Analyser' },
   ];
 
   return (

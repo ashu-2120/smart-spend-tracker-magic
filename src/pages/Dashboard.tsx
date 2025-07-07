@@ -4,8 +4,9 @@ import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import DashboardHome from '@/components/dashboard/DashboardHome';
-import DashboardSpends from '@/components/dashboard/DashboardSpends';
-import DashboardAnalyse from '@/components/dashboard/DashboardAnalyse';
+import DashboardExpenseSummary from '@/components/dashboard/DashboardExpenseSummary';
+import DashboardExpenseHistory from '@/components/dashboard/DashboardExpenseHistory';
+import DashboardExpenseAnalyser from '@/components/dashboard/DashboardExpenseAnalyser';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -33,8 +34,12 @@ const Dashboard = () => {
       <div className="pt-16">
         <Routes>
           <Route path="/" element={<DashboardHome />} />
-          <Route path="/spends" element={<DashboardSpends />} />
-          <Route path="/analyse" element={<DashboardAnalyse />} />
+          <Route path="/expense-summary" element={<DashboardExpenseSummary />} />
+          <Route path="/expense-history" element={<DashboardExpenseHistory />} />
+          <Route path="/expense-analyser" element={<DashboardExpenseAnalyser />} />
+          {/* Legacy redirects for old paths */}
+          <Route path="/spends" element={<Navigate to="/dashboard/expense-summary" replace />} />
+          <Route path="/analyse" element={<Navigate to="/dashboard/expense-analyser" replace />} />
           {/* Redirect /dashboard to /dashboard/ */}
           <Route path="*" element={<Navigate to="/dashboard/" replace />} />
         </Routes>
