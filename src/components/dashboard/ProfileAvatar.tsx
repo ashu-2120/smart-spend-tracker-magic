@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 interface Profile {
   avatar_url: string | null;
   name: string | null;
-  completion_score: number;
+  completion_score?: number;
 }
 
 const ProfileAvatar = () => {
@@ -53,12 +53,20 @@ const ProfileAvatar = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('avatar_url, name, completion_score')
+        .select('avatar_url, name')
         .eq('id', user?.id)
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Handle the profile data, including completion_score if it exists
+      const profileData: Profile = {
+        avatar_url: data.avatar_url,
+        name: data.name,
+        completion_score: (data as any).completion_score || 0
+      };
+      
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }

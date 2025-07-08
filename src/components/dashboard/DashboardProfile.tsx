@@ -21,7 +21,7 @@ interface ProfileData {
   gender: string | null;
   income: number | null;
   avatar_url: string | null;
-  completion_score: number;
+  completion_score?: number;
 }
 
 const DashboardProfile = () => {
@@ -47,7 +47,21 @@ const DashboardProfile = () => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Handle the data properly, adding completion_score if it exists
+      const profileData: ProfileData = {
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        phone: data.phone,
+        age: data.age,
+        gender: data.gender,
+        income: data.income,
+        avatar_url: data.avatar_url,
+        completion_score: (data as any).completion_score || 0
+      };
+      
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -169,15 +183,17 @@ const DashboardProfile = () => {
     );
   }
 
+  const completionScore = profile.completion_score || 0;
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-gray-600">
-            Profile Completion: {profile.completion_score}%
+            Profile Completion: {completionScore}%
           </div>
-          <Progress value={profile.completion_score} className="w-32" />
+          <Progress value={completionScore} className="w-32" />
         </div>
       </div>
 
