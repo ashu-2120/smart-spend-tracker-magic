@@ -56,6 +56,33 @@ export type Database = {
         }
         Relationships: []
       }
+      invites: {
+        Row: {
+          created_at: string
+          id: string
+          invite_method: string
+          invite_status: string | null
+          invitee_email: string
+          inviter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_method: string
+          invite_status?: string | null
+          invitee_email: string
+          inviter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_method?: string
+          invite_status?: string | null
+          invitee_email?: string
+          inviter_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -103,7 +130,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_user_exists: {
+        Args: { email_to_check: string }
+        Returns: boolean
+      }
     }
     Enums: {
       expense_category:

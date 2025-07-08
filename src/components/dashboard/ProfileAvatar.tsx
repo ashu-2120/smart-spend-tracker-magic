@@ -84,6 +84,10 @@ const ProfileAvatar = () => {
     return user?.email?.charAt(0).toUpperCase() || 'U';
   };
 
+  const getDisplayName = () => {
+    return profile?.name || user?.email || 'User';
+  };
+
   const getAvatarUrl = () => {
     if (profile?.avatar_url) {
       return `${supabase.storage.from('avatars').getPublicUrl(profile.avatar_url).data.publicUrl}`;
@@ -98,7 +102,9 @@ const ProfileAvatar = () => {
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className={`relative w-10 h-10 rounded-full transition-all duration-300 ${
-          isIncomplete ? 'ring-2 ring-orange-400 animate-pulse' : 'hover:ring-2 hover:ring-green-300'
+          isIncomplete 
+            ? 'ring-2 ring-dashed ring-orange-400 ring-offset-2' 
+            : 'hover:ring-2 hover:ring-green-300'
         }`}
       >
         <Avatar className="w-10 h-10">
@@ -117,7 +123,7 @@ const ProfileAvatar = () => {
       {isDropdownOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
           <div className="px-4 py-2 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900">{profile?.name || 'User'}</p>
+            <p className="text-sm font-medium text-gray-900">{getDisplayName()}</p>
             <p className="text-xs text-gray-500">{user?.email}</p>
             {isIncomplete && (
               <p className="text-xs text-orange-600 mt-1">
@@ -144,16 +150,14 @@ const ProfileAvatar = () => {
             Settings
           </Link>
           
-          <button
-            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            onClick={() => {
-              setIsDropdownOpen(false);
-              // TODO: Implement invite friends modal
-            }}
+          <Link
+            to="/dashboard/invite-friends"
+            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            onClick={() => setIsDropdownOpen(false)}
           >
             <Users className="w-4 h-4 mr-3" />
             Invite Friends
-          </button>
+          </Link>
           
           <div className="border-t border-gray-100 mt-2 pt-2">
             <button

@@ -9,6 +9,7 @@ import DashboardExpenseHistory from '@/components/dashboard/DashboardExpenseHist
 import DashboardExpenseAnalyser from '@/components/dashboard/DashboardExpenseAnalyser';
 import DashboardProfile from '@/components/dashboard/DashboardProfile';
 import DashboardSettings from '@/components/dashboard/DashboardSettings';
+import DashboardInviteFriends from '@/components/dashboard/DashboardInviteFriends';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -41,6 +42,7 @@ const Dashboard = () => {
           <Route path="/expense-analyser" element={<DashboardExpenseAnalyser />} />
           <Route path="/profile" element={<DashboardProfile />} />
           <Route path="/settings" element={<DashboardSettings />} />
+          <Route path="/invite-friends" element={<DashboardInviteFriends />} />
           {/* Legacy redirects for old paths */}
           <Route path="/spends" element={<Navigate to="/dashboard/expense-summary" replace />} />
           <Route path="/analyse" element={<Navigate to="/dashboard/expense-analyser" replace />} />

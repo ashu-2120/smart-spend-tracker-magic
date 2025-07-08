@@ -41,20 +41,16 @@ const DashboardSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      // Use a direct query since the user_settings table might not be in the types yet
-      const { data, error } = await supabase
-        .rpc('exec_sql', { 
-          sql: `SELECT * FROM user_settings WHERE user_id = '${user?.id}'` 
-        });
+      // Use RPC since user_settings table is not in types yet
+      const { data, error } = await supabase.rpc('exec_sql', {
+        sql: `SELECT * FROM user_settings WHERE user_id = '${user?.id}'`
+      });
 
-      if (error) {
-        // Fallback: try to create default settings if they don't exist
-        const { data: insertData, error: insertError } = await supabase
-          .rpc('exec_sql', { 
-            sql: `INSERT INTO user_settings (user_id) VALUES ('${user?.id}') ON CONFLICT (user_id) DO NOTHING RETURNING *` 
-          });
-        
-        if (insertError) throw insertError;
+      if (error || !data || data.length === 0) {
+        // Create default settings if they don't exist
+        await supabase.rpc('exec_sql', {
+          sql: `INSERT INTO user_settings (user_id) VALUES ('${user?.id}') ON CONFLICT (user_id) DO NOTHING`
+        });
         
         // Set default values
         const defaultSettings: UserSettings = {
@@ -67,7 +63,7 @@ const DashboardSettings = () => {
           budget_alerts: true
         };
         setSettings(defaultSettings);
-      } else if (data && data.length > 0) {
+      } else {
         setSettings(data[0] as UserSettings);
       }
     } catch (error) {
@@ -99,18 +95,17 @@ const DashboardSettings = () => {
 
     setSaving(true);
     try {
-      // Use a direct update query
-      const { error } = await supabase
-        .rpc('exec_sql', { 
-          sql: `UPDATE user_settings SET 
-                  currency = '${settings.currency}',
-                  monthly_budget = ${settings.monthly_budget},
-                  theme = '${settings.theme}',
-                  notifications_enabled = ${settings.notifications_enabled},
-                  budget_alerts = ${settings.budget_alerts},
-                  updated_at = now()
-                WHERE user_id = '${user.id}'` 
-        });
+      // Use RPC since user_settings table is not in types yet
+      const { error } = await supabase.rpc('exec_sql', {
+        sql: `UPDATE user_settings SET 
+                currency = '${settings.currency}',
+                monthly_budget = ${settings.monthly_budget},
+                theme = '${settings.theme}',
+                notifications_enabled = ${settings.notifications_enabled},
+                budget_alerts = ${settings.budget_alerts},
+                updated_at = now()
+              WHERE user_id = '${user.id}'`
+      });
 
       if (error) throw error;
 
