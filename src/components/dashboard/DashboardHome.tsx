@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Upload, TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-react';
 import AddExpenseModal from './AddExpenseModal';
+import UploadReceiptModal from './UploadReceiptModal';
 
 interface ExpenseSummary {
   totalAmount: number;
@@ -17,6 +18,7 @@ interface ExpenseSummary {
 const DashboardHome = () => {
   const { user } = useAuth();
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const [isUploadReceiptOpen, setIsUploadReceiptOpen] = useState(false);
   const [expenseSummary, setExpenseSummary] = useState<ExpenseSummary>({
     totalAmount: 0,
     topCategory: '',
@@ -112,7 +114,7 @@ const DashboardHome = () => {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setIsUploadReceiptOpen(true)}>
           <CardContent className="flex items-center justify-center p-6">
             <div className="text-center">
               <Upload className="h-12 w-12 text-blue-600 mx-auto mb-4" />
@@ -200,6 +202,12 @@ const DashboardHome = () => {
       <AddExpenseModal 
         open={isAddExpenseOpen} 
         onOpenChange={setIsAddExpenseOpen}
+      />
+      
+      <UploadReceiptModal 
+        isOpen={isUploadReceiptOpen}
+        onClose={() => setIsUploadReceiptOpen(false)}
+        onSuccess={loadExpenseSummary}
       />
     </div>
   );
