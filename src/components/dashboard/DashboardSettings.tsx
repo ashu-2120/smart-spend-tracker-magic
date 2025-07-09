@@ -41,30 +41,30 @@ const DashboardSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      // Use RPC since user_settings table is not in types yet
-      const { data, error } = await supabase.rpc('exec_sql', {
-        sql: `SELECT * FROM user_settings WHERE user_id = '${user?.id}'`
+      // Use the custom function to get user settings
+      const { data, error } = await supabase.rpc('get_user_settings', { 
+        user_uuid: user?.id 
       });
 
-      if (error || !data || data.length === 0) {
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setSettings(data[0] as UserSettings);
+      } else {
         // Create default settings if they don't exist
-        await supabase.rpc('exec_sql', {
-          sql: `INSERT INTO user_settings (user_id) VALUES ('${user?.id}') ON CONFLICT (user_id) DO NOTHING`
+        const { data: newSettings, error: createError } = await supabase.rpc('upsert_user_settings', {
+          user_uuid: user?.id
         });
         
-        // Set default values
-        const defaultSettings: UserSettings = {
-          id: crypto.randomUUID(),
-          user_id: user?.id || '',
-          currency: 'USD',
-          monthly_budget: 0,
-          theme: 'light',
-          notifications_enabled: true,
-          budget_alerts: true
-        };
-        setSettings(defaultSettings);
-      } else {
-        setSettings(data[0] as UserSettings);
+        if (createError) throw createError;
+        
+        if (newSettings && newSettings.length > 0) {
+          setSettings({
+            ...newSettings[0],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          } as UserSettings);
+        }
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -95,16 +95,14 @@ const DashboardSettings = () => {
 
     setSaving(true);
     try {
-      // Use RPC since user_settings table is not in types yet
-      const { error } = await supabase.rpc('exec_sql', {
-        sql: `UPDATE user_settings SET 
-                currency = '${settings.currency}',
-                monthly_budget = ${settings.monthly_budget},
-                theme = '${settings.theme}',
-                notifications_enabled = ${settings.notifications_enabled},
-                budget_alerts = ${settings.budget_alerts},
-                updated_at = now()
-              WHERE user_id = '${user.id}'`
+      // Use the custom function to save user settings
+      const { data, error } = await supabase.rpc('upsert_user_settings', {
+        user_uuid: user.id,
+        p_currency: settings.currency,
+        p_monthly_budget: settings.monthly_budget,
+        p_theme: settings.theme,
+        p_notifications_enabled: settings.notifications_enabled,
+        p_budget_alerts: settings.budget_alerts
       });
 
       if (error) throw error;

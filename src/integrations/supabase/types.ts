@@ -125,6 +125,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          budget_alerts: boolean | null
+          created_at: string
+          currency: string | null
+          id: string
+          monthly_budget: number | null
+          notifications_enabled: boolean | null
+          theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget_alerts?: boolean | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          monthly_budget?: number | null
+          notifications_enabled?: boolean | null
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget_alerts?: boolean | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          monthly_budget?: number | null
+          notifications_enabled?: boolean | null
+          theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -133,6 +169,39 @@ export type Database = {
       check_user_exists: {
         Args: { email_to_check: string }
         Returns: boolean
+      }
+      get_user_settings: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          user_id: string
+          currency: string
+          monthly_budget: number
+          theme: string
+          notifications_enabled: boolean
+          budget_alerts: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      upsert_user_settings: {
+        Args: {
+          user_uuid: string
+          p_currency?: string
+          p_monthly_budget?: number
+          p_theme?: string
+          p_notifications_enabled?: boolean
+          p_budget_alerts?: boolean
+        }
+        Returns: {
+          id: string
+          user_id: string
+          currency: string
+          monthly_budget: number
+          theme: string
+          notifications_enabled: boolean
+          budget_alerts: boolean
+        }[]
       }
     }
     Enums: {
