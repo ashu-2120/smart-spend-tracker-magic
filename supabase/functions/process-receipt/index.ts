@@ -22,7 +22,7 @@ serve(async (req) => {
     console.log('Step 1: File uploaded successfully', { imageUrl, userId });
 
     // OCR with Google Cloud Vision API
-    const visionApiKey = Deno.env.get('GOOGLE_CLOUD_VISION_API_KEY');
+    const visionApiKey = Deno.env.get('GOOGLE_CLOUD_VISION_KEY');
     if (!visionApiKey) {
       throw new Error('Google Cloud Vision API key not configured');
     }
