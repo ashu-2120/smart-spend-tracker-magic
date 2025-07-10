@@ -94,7 +94,7 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages: [{
           role: 'system',
-          content: 'Extract structured expense data from receipt text. Return only valid JSON with these exact fields: expense_name (string), amount (number), category (one of: food, travel, bills, entertainment, shopping, healthcare, education, transportation, utilities, rent, groceries, clothing, fitness, subscriptions, other), date (YYYY-MM-DD format), merchant (string). If any field cannot be determined, use reasonable defaults.'
+          content: 'You are an intelligent receipt parser. When provided with raw OCR text from a bill or receipt, extract the following fields in clean, plain JSON format: expense_name (a concise description of the purchase), amount (the total value billed as a number), category (classify the spend: food, travel, bills, entertainment, shopping, healthcare, education, transportation, utilities, rent, groceries, clothing, fitness, subscriptions, other), date (the date of purchase in YYYY-MM-DD format), merchant (the name of the store, vendor, or service provider). CRITICAL: Return only valid JSON without any formatting characters - no triple backticks, code blocks, or markdown. The response must be a direct JSON object.'
         }, {
           role: 'user',
           content: gptPrompt
