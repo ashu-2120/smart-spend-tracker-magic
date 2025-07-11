@@ -20,7 +20,16 @@ const HeroSection = () => {
   };
 
   const handleTryDemo = () => {
-    navigate('/demo'); // This could be implemented later
+    // Navigate to demo section on landing page or dashboard
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      // Scroll to demo section on current page
+      const demoSection = document.getElementById('demo-section');
+      if (demoSection) {
+        demoSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (

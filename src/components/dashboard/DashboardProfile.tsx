@@ -38,6 +38,15 @@ const DashboardProfile = () => {
     }
   }, [user]);
 
+  const calculateCompletionScore = (profileData: any) => {
+    const fields = ['name', 'phone', 'age', 'gender', 'income', 'avatar_url'];
+    const filledFields = fields.filter(field => {
+      const value = profileData[field];
+      return value !== null && value !== undefined && value !== '';
+    });
+    return Math.round((filledFields.length / fields.length) * 100);
+  };
+
   const fetchProfile = async () => {
     try {
       const { data, error } = await supabase
@@ -48,7 +57,9 @@ const DashboardProfile = () => {
 
       if (error) throw error;
       
-      // Handle the data properly, adding completion_score if it exists
+      // Calculate completion score dynamically
+      const completion_score = calculateCompletionScore(data);
+      
       const profileData: ProfileData = {
         id: data.id,
         email: data.email,
@@ -58,7 +69,7 @@ const DashboardProfile = () => {
         gender: data.gender,
         income: data.income,
         avatar_url: data.avatar_url,
-        completion_score: (data as any).completion_score || 0
+        completion_score
       };
       
       setProfile(profileData);
@@ -188,7 +199,8 @@ const DashboardProfile = () => {
     );
   }
 
-  const completionScore = profile.completion_score || 0;
+  // Recalculate completion score in real-time
+  const completionScore = profile ? calculateCompletionScore(profile) : 0;
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">

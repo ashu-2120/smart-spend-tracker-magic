@@ -25,6 +25,31 @@ const ProfileAvatar = () => {
     }
   }, [user]);
 
+  // Real-time profile updates
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        () => {
+          fetchProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -49,21 +74,32 @@ const ProfileAvatar = () => {
     };
   }, [isDropdownOpen]);
 
+  const calculateCompletionScore = (profileData: any) => {
+    const fields = ['name', 'phone', 'age', 'gender', 'income', 'avatar_url'];
+    const filledFields = fields.filter(field => {
+      const value = profileData[field];
+      return value !== null && value !== undefined && value !== '';
+    });
+    return Math.round((filledFields.length / fields.length) * 100);
+  };
+
   const fetchProfile = async () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('avatar_url, name')
+        .select('*')
         .eq('id', user?.id)
         .single();
 
       if (error) throw error;
       
-      // Handle the profile data, including completion_score if it exists
+      // Calculate completion score dynamically
+      const completion_score = calculateCompletionScore(data);
+      
       const profileData: Profile = {
         avatar_url: data.avatar_url,
         name: data.name,
-        completion_score: (data as any).completion_score || 0
+        completion_score
       };
       
       setProfile(profileData);
@@ -101,23 +137,48 @@ const ProfileAvatar = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className={`relative w-10 h-10 rounded-full transition-all duration-300 ${
-          isIncomplete 
-            ? 'ring-2 ring-dashed ring-orange-400 ring-offset-2' 
-            : 'hover:ring-2 hover:ring-green-300'
-        }`}
+        className="relative w-10 h-10 rounded-full transition-all duration-300 hover:scale-105"
       >
-        <Avatar className="w-10 h-10">
-          <AvatarImage src={getAvatarUrl() || ''} alt="Profile" />
-          <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
-            {getInitials()}
-          </AvatarFallback>
-        </Avatar>
-        {isIncomplete && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-            !
-          </div>
-        )}
+        <div className="relative">
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={getAvatarUrl() || ''} alt="Profile" />
+            <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
+              {getInitials()}
+            </AvatarFallback>
+          </Avatar>
+          {/* Progress ring for incomplete profiles */}
+          {isIncomplete && (
+            <svg 
+              className="absolute inset-0 w-10 h-10 transform -rotate-90"
+              viewBox="0 0 36 36"
+            >
+              <path
+                className="stroke-gray-200"
+                strokeWidth="2"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <path
+                className="stroke-orange-500 transition-all duration-500 ease-out"
+                strokeWidth="2"
+                strokeDasharray={`${(profile?.completion_score || 0)}, 100`}
+                strokeLinecap="round"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+            </svg>
+          )}
+          {/* Complete indicator */}
+          {!isIncomplete && (
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-xs rounded-full flex items-center justify-center">
+              ✓
+            </div>
+          )}
+        </div>
       </button>
 
       {isDropdownOpen && (

@@ -34,6 +34,30 @@ const DashboardHome = () => {
     }
   }, [user]);
 
+  // Auto-refresh when expenses are added
+  useEffect(() => {
+    const channel = supabase
+      .channel('expense-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'expenses',
+          filter: `user_id=eq.${user?.id}`
+        },
+        () => {
+          console.log('New expense added, refreshing data...');
+          loadExpenseSummary();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
+
   const loadExpenseSummary = async () => {
     try {
       const currentMonth = new Date();
