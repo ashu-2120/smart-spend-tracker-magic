@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from '@/contexts/AuthContext';
@@ -263,8 +264,10 @@ const DashboardExpenseHistory = () => {
               </SelectContent>
             </Select>
 
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="date-from" className="text-sm font-medium text-gray-700">From</Label>
               <Input
+                id="date-from"
                 type="date"
                 placeholder="Date from"
                 value={dateFrom}
@@ -272,8 +275,10 @@ const DashboardExpenseHistory = () => {
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="date-to" className="text-sm font-medium text-gray-700">To</Label>
               <Input
+                id="date-to"
                 type="date"
                 placeholder="Date to"
                 value={dateTo}

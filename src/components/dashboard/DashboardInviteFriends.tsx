@@ -19,6 +19,10 @@ const DashboardInviteFriends = () => {
 
   const referralUrl = `${window.location.origin}/?ref=${user?.id}`;
 
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   const handleEmailInvite = async () => {
     if (!emailInput.trim() || !user) return;
 

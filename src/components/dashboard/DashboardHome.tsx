@@ -16,6 +16,10 @@ interface ExpenseSummary {
   categoryBreakdown: Record<string, number>;
 }
 
+interface UserSettings {
+  monthly_budget: number;
+}
+
 const DashboardHome = () => {
   const { user } = useAuth();
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
@@ -26,13 +30,45 @@ const DashboardHome = () => {
     recentExpenses: [],
     categoryBreakdown: {}
   });
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       loadExpenseSummary();
+      loadUserSettings();
     }
   }, [user]);
+
+  const loadUserSettings = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_user_settings', { 
+        user_uuid: user?.id 
+      });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setUserSettings(data[0]);
+      } else {
+        // Create default settings if they don't exist
+        const { data: newSettings, error: createError } = await supabase.rpc('upsert_user_settings', {
+          user_uuid: user?.id,
+          p_monthly_budget: 5000
+        });
+        
+        if (createError) throw createError;
+        
+        if (newSettings && newSettings.length > 0) {
+          setUserSettings(newSettings[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user settings:', error);
+      // Set default budget if loading fails
+      setUserSettings({ monthly_budget: 5000 });
+    }
+  };
 
   // Auto-refresh when expenses are added
   useEffect(() => {
@@ -109,7 +145,7 @@ const DashboardHome = () => {
     }
   };
 
-  const monthlyBudget = 5000; // This could be from user profile
+  const monthlyBudget = userSettings?.monthly_budget || 5000;
   const budgetProgress = (expenseSummary.totalAmount / monthlyBudget) * 100;
 
   if (loading) {

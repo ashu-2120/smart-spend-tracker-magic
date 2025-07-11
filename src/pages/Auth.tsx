@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,13 @@ import { Eye, EyeOff, Home } from 'lucide-react';
 
 const Auth = () => {
   const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Get the tab from URL params, default to 'signin'
+  const tabFromUrl = searchParams.get('tab') || 'signin';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
 
   // Sign In form state
   const [signInEmail, setSignInEmail] = useState('');
@@ -104,7 +109,7 @@ const Auth = () => {
           </CardHeader>
           <CardContent>
             {!showReset ? (
-              <Tabs defaultValue="signin" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="signin">Sign In</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>

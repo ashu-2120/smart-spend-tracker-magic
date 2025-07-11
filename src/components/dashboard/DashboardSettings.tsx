@@ -91,36 +91,10 @@ const DashboardSettings = () => {
     }
   };
 
-  // Auto-save settings when they change
-  const handleSettingsChange = async (newSettings: UserSettings) => {
+  // Handle settings changes without auto-save
+  const handleSettingsChange = (newSettings: UserSettings) => {
     setSettings(newSettings);
     setHasUnsavedChanges(true);
-    
-    // Auto-save after 1 second delay
-    setTimeout(async () => {
-      if (!user) return;
-      
-      try {
-        const { error } = await supabase.rpc('upsert_user_settings', {
-          user_uuid: user.id,
-          p_currency: newSettings.currency,
-          p_monthly_budget: newSettings.monthly_budget,
-          p_theme: newSettings.theme,
-          p_notifications_enabled: newSettings.notifications_enabled,
-          p_budget_alerts: newSettings.budget_alerts
-        });
-
-        if (error) throw error;
-        
-        setHasUnsavedChanges(false);
-        toast({
-          title: "Settings saved",
-          description: "Your settings have been automatically saved",
-        });
-      } catch (error) {
-        console.error('Error auto-saving settings:', error);
-      }
-    }, 1000);
   };
 
   const handleSave = async () => {
@@ -145,6 +119,11 @@ const DashboardSettings = () => {
         title: "Success",
         description: "Settings updated successfully",
       });
+      
+      // Redirect to Dashboard Home after successful save
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1000);
     } catch (error) {
       console.error('Error updating settings:', error);
       toast({
