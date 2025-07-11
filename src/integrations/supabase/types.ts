@@ -184,6 +184,15 @@ export type Database = {
           updated_at: string
         }[]
       }
+      send_budget_alert_email: {
+        Args: {
+          user_email: string
+          current_spending: number
+          budget_limit: number
+          month_year: string
+        }
+        Returns: boolean
+      }
       upsert_user_settings: {
         Args: {
           user_uuid: string

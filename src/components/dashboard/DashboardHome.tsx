@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Upload, TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-react';
 import AddExpenseModal from './AddExpenseModal';
 import UploadReceiptModal from './UploadReceiptModal';
+import BudgetAlert from './BudgetAlert';
 
 interface ExpenseSummary {
   totalAmount: number;
@@ -97,6 +98,8 @@ const DashboardHome = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <BudgetAlert />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h1>
         <p className="text-gray-600">Here's your expense overview for this month.</p>

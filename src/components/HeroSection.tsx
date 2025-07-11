@@ -11,9 +11,10 @@ const HeroSection = () => {
 
   const handleGetStarted = () => {
     if (user) {
-      // User is already logged in, could navigate to dashboard if it exists
-      return;
+      // User is authenticated, navigate to dashboard
+      navigate('/dashboard');
     } else {
+      // User is not authenticated, navigate to auth page
       navigate('/auth');
     }
   };

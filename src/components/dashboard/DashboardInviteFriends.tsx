@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Share2, Mail, Copy, MessageCircle, Send, Users, Check } from 'lucide-react';
+import { Share2, Mail, Copy, MessageCircle, Send, Users, Check, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const DashboardInviteFriends = () => {
@@ -41,14 +41,31 @@ const DashboardInviteFriends = () => {
         });
 
         if (!userExists) {
-          // Here you would typically send an email via edge function
-          // For now, we'll just show a success message
-          console.log(`Invite would be sent to: ${email}`);
+          // Send invite email via edge function
+          try {
+            const response = await fetch(`/functions/v1/send-invite-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+              },
+              body: JSON.stringify({
+                invitee_email: email,
+                referral_url: referralUrl,
+              }),
+            });
+            
+            if (!response.ok) {
+              console.error('Failed to send invite email');
+            }
+          } catch (error) {
+            console.error('Error sending invite email:', error);
+          }
         }
       }
 
       toast({
-        title: "Invitations sent!",
+        title: "Invite sent successfully",
         description: `Successfully sent ${emails.length} invitation(s)`,
       });
 
@@ -124,7 +141,16 @@ const DashboardInviteFriends = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900">Invite Friends</h1>
+      <div className="flex items-center space-x-4">
+        <Button
+          variant="ghost"
+          onClick={() => window.history.back()}
+          className="p-2"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h1 className="text-3xl font-bold text-gray-900">Invite Friends</h1>
+      </div>
 
       <Card>
         <CardHeader>

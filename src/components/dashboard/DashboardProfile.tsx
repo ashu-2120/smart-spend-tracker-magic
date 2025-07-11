@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Camera, Save, Loader2 } from 'lucide-react';
+import { Camera, Save, Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -136,6 +136,11 @@ const DashboardProfile = () => {
         title: "Success",
         description: "Profile updated successfully",
       });
+
+      // Navigate back to dashboard after successful save
+      setTimeout(() => {
+        window.history.back();
+      }, 1500);
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -188,7 +193,16 @@ const DashboardProfile = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => window.history.back()}
+            className="p-2"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+        </div>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-gray-600">
             Profile Completion: {completionScore}%

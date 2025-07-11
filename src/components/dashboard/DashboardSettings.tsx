@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Save, Loader2, Key } from 'lucide-react';
+import { Save, Loader2, Key, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserSettings {
@@ -32,6 +32,7 @@ const DashboardSettings = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -90,6 +91,38 @@ const DashboardSettings = () => {
     }
   };
 
+  // Auto-save settings when they change
+  const handleSettingsChange = async (newSettings: UserSettings) => {
+    setSettings(newSettings);
+    setHasUnsavedChanges(true);
+    
+    // Auto-save after 1 second delay
+    setTimeout(async () => {
+      if (!user) return;
+      
+      try {
+        const { error } = await supabase.rpc('upsert_user_settings', {
+          user_uuid: user.id,
+          p_currency: newSettings.currency,
+          p_monthly_budget: newSettings.monthly_budget,
+          p_theme: newSettings.theme,
+          p_notifications_enabled: newSettings.notifications_enabled,
+          p_budget_alerts: newSettings.budget_alerts
+        });
+
+        if (error) throw error;
+        
+        setHasUnsavedChanges(false);
+        toast({
+          title: "Settings saved",
+          description: "Your settings have been automatically saved",
+        });
+      } catch (error) {
+        console.error('Error auto-saving settings:', error);
+      }
+    }, 1000);
+  };
+
   const handleSave = async () => {
     if (!settings || !user) return;
 
@@ -107,6 +140,7 @@ const DashboardSettings = () => {
 
       if (error) throw error;
 
+      setHasUnsavedChanges(false);
       toast({
         title: "Success",
         description: "Settings updated successfully",
@@ -187,7 +221,19 @@ const DashboardSettings = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+      <div className="flex items-center space-x-4">
+        <Button
+          variant="ghost"
+          onClick={() => window.history.back()}
+          className="p-2"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        {hasUnsavedChanges && (
+          <span className="text-sm text-orange-600">• Unsaved changes</span>
+        )}
+      </div>
 
       <Card>
         <CardHeader>
@@ -200,7 +246,7 @@ const DashboardSettings = () => {
               <Label htmlFor="currency">Default Currency</Label>
               <Select
                 value={settings.currency}
-                onValueChange={(value) => setSettings({ ...settings, currency: value })}
+                onValueChange={(value) => handleSettingsChange({ ...settings, currency: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select currency" />
@@ -223,7 +269,7 @@ const DashboardSettings = () => {
                 id="budget"
                 type="number"
                 value={settings.monthly_budget}
-                onChange={(e) => setSettings({ ...settings, monthly_budget: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => handleSettingsChange({ ...settings, monthly_budget: parseFloat(e.target.value) || 0 })}
                 placeholder="Enter your monthly budget"
                 min="0"
                 step="0.01"
@@ -243,7 +289,7 @@ const DashboardSettings = () => {
             <Label htmlFor="theme">Theme</Label>
             <Select
               value={settings.theme}
-              onValueChange={(value) => setSettings({ ...settings, theme: value })}
+              onValueChange={(value) => handleSettingsChange({ ...settings, theme: value })}
             >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Select theme" />
@@ -272,7 +318,7 @@ const DashboardSettings = () => {
             <Switch
               id="notifications"
               checked={settings.notifications_enabled}
-              onCheckedChange={(checked) => setSettings({ ...settings, notifications_enabled: checked })}
+              onCheckedChange={(checked) => handleSettingsChange({ ...settings, notifications_enabled: checked })}
             />
           </div>
           
@@ -284,7 +330,7 @@ const DashboardSettings = () => {
             <Switch
               id="budget-alerts"
               checked={settings.budget_alerts}
-              onCheckedChange={(checked) => setSettings({ ...settings, budget_alerts: checked })}
+              onCheckedChange={(checked) => handleSettingsChange({ ...settings, budget_alerts: checked })}
             />
           </div>
         </CardContent>
