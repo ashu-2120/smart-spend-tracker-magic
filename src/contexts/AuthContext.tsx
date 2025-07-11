@@ -160,6 +160,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      // Clear state immediately to prevent UI flicker
+      setUser(null);
+      setSession(null);
+      
       cleanupAuthState();
       
       try {
@@ -168,19 +172,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Continue even if this fails
       }
 
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-
-      // Redirect to auth page after successful signout
-      window.location.href = '/auth';
+      // Force immediate redirect to prevent flicker
+      window.location.replace('/auth');
     } catch (error: any) {
       toast({
         title: "Sign Out Error",
         description: error.message,
         variant: "destructive",
       });
+      // Even on error, redirect to auth page
+      window.location.replace('/auth');
     }
   };
 

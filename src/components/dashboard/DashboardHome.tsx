@@ -265,6 +265,7 @@ const DashboardHome = () => {
       <AddExpenseModal 
         open={isAddExpenseOpen} 
         onOpenChange={setIsAddExpenseOpen}
+        onSuccess={loadExpenseSummary}
       />
       
       <UploadReceiptModal 

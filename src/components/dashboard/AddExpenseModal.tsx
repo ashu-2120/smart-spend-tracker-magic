@@ -19,9 +19,10 @@ import { useLocation } from "@/contexts/LocationContext";
 interface AddExpenseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange }) => {
+const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange, onSuccess }) => {
   const [expenseName, setExpenseName] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<string>('');
@@ -133,6 +134,9 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ open, onOpenChange })
       setNotes('');
       setAttachment(null);
       onOpenChange(false);
+      
+      // Trigger success callback to refresh data
+      onSuccess?.();
 
     } catch (error: any) {
       toast({
